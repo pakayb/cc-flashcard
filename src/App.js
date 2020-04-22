@@ -1,12 +1,19 @@
 import React from 'react';
+import {BrowserRouter as Router,
+        Route,
+        Link,
+        Switch
+        } from "react-router-dom";
 import './App.css';
-import {db} from './firebase'
+import {db, storage} from './firebase'
+import {useCollectionData, useCollectionDataOnce} from "react-firebase-hooks/firestore";
+import Nav from "./NavBar/Nav";
 
 function App() {
-  console.log(db.collection('employees'));
+
   return (
     <div className="App">
-
+      <Nav/>
     </div>
   );
 }

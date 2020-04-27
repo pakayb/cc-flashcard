@@ -5,7 +5,8 @@ import {storage} from "../firebase";
 function Card(props) {
     const [image, setImage] = useState("");
     let storageRef = storage.ref();
-    let downloadUrl = storageRef.child('images/image0.jpg').getDownloadURL().then(url=> setImage(url));
+    if (props.picture!=undefined){let pictureUrl = props.picture;
+    let downloadUrl = storage.refFromURL(pictureUrl).getDownloadURL().then(url=> setImage(url));}
     return (
         <div className='card text-center'>
             <div className='overflow'>

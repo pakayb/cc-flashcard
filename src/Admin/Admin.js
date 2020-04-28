@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {storage,db} from "../firebase";
 import firebase from "firebase";
+import MyEditor from "./PhotoEditor";
 
 function Admin() {
 
@@ -45,7 +46,14 @@ function Admin() {
                 });
             });
     }
-    const {register, handleSubmit,errors} = useForm();
+    const [name,setName] = useState("");
+    const [location, setLocation] = useState("Budapest");
+    const [gender, setGender] = useState("");
+    const [role, setRole] = useState("");
+    const [funFact, setFunFact] = useState("");
+    const [hasTwin, setHasTwin] = useState("");
+    const [image, setImage] = useState("");
+
     const onsubmit = data =>{
         if (data.file!=undefined){uploadPicture(data.file.item(0));}
         data.picture = pictureRef.toString();
@@ -55,27 +63,43 @@ function Admin() {
         //console.log(data);
         //console.log(data.file.item(0))
     };
+    function handleSubmit(event){
+        event.preventDefault();
+        uploadPicture(image);
+
+        const data = {"name":name,
+            "location":location,
+            "gender":gender,
+            "role":role,
+            "funfact":funFact,
+            "hastwin":hasTwin,
+            "picture":pictureRef.toString()
+        };
+        console.log(data);
+        db.collection('employees').doc().set(data);
+    }
 
     let storageRef = storage.ref();
     const pictureDest ='images/'.concat(Date.now().toString());
     let pictureRef = storageRef.child('images/'.concat(Date.now().toString()));
     let downloadUrl = "";
+
     return  (
-<form onSubmit={handleSubmit(onsubmit)}>
-    <input type="text" placeholder="name" name="name" ref={register({required: true, maxLength: 80})} /><br/>
-    <label>Location: <select name="location" ref={register({ required: true })}>
+<form onSubmit={handleSubmit}>
+    <input type="text" placeholder="name" name="name" onChange={event => setName(event.target.value)} /><br/>
+    <label>Location: <select name="location" onChange={event => setLocation(event.target.value)}>
         <option value="Budapest">Budapest</option>
         <option value="Miskolc">Miskolc</option>
     </select></label><br/>
 
-    <label>Male: <input name="gender" type="radio" value="Male" ref={register({ required: true })}/></label>
-    <label>Female: <input name="gender" type="radio" value="Female" ref={register({ required: true })}/></label><br/>
-    <input type="text" placeholder="role" name="role" ref={register({required: true})} /><br/>
-    <input type="text" placeholder="funfact" name="funfact" ref={register} /><br/>
+    <label>Male: <input name="gender" type="radio" value="Male" onChange={event => setGender(event.target.value)} /></label>
+    <label>Female: <input name="gender" type="radio" value="Female" onChange={event => setGender(event.target.value)} /></label><br/>
+    <input type="text" placeholder="role" name="role" onChange={event => setRole(event.target.value)} /><br/>
+    <input type="text" placeholder="funfact" name="funfact" onChange={event => setFunFact(event.target.value)} /><br/>
 
-    <label>Has twin:   Yes<input name="hastwin" type="radio" value="Yes" ref={register}/></label>
-    <label>No<input name="hastwin" type="radio" value="No" ref={register}/></label><br/>
-    <label><input type='file'name='file' ref={register}/></label>
+    <label>Has twin:   Yes<input name="hastwin" type="radio" value="Yes" onChange={event => setHasTwin(event.target.value)}/></label>
+    <label>No<input name="hastwin" type="radio" value="No" onChange={event => setHasTwin(event.target.value)}/></label><br/>
+    <label><input type='file'name='file' onChange={event => setImage(event.target.files.item(0))}/></label>
         <button type="submit">Submit</button>
 </form>
     )

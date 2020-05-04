@@ -1,15 +1,15 @@
 import React, {useState} from "react";
-import {useForm} from "react-hook-form";
 import {storage,db} from "../firebase";
 import firebase from "firebase";
-import MyEditor from "./PhotoEditor";
+import AvatarEditor from 'react-avatar-editor'
+
 
 function Admin() {
 
-    function uploadPicture(picture) {
+    function uploadPicture(pictureDataUrl) {
 
 // Upload file and metadata to the object 'images/mountains.jpg'
-        var uploadTask = pictureRef.put(picture);
+        var uploadTask = pictureRef.putString(pictureDataUrl, "data_url");
 
 // Listen for state changes, errors, and completion of the upload.
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -42,30 +42,30 @@ function Admin() {
                 // Upload completed successfully, now we can get the download URL
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
                     console.log('File available at', downloadURL);
-                    downloadUrl = downloadURL
                 });
             });
     }
+    const [scale, setScale] = useState(1.2);
     const [name,setName] = useState("");
     const [location, setLocation] = useState("Budapest");
     const [gender, setGender] = useState("");
     const [role, setRole] = useState("");
     const [funFact, setFunFact] = useState("");
     const [hasTwin, setHasTwin] = useState("");
-    const [image, setImage] = useState("");
+    const [image, setImage] = useState(null);
+    const [imageDataUrl, setImageDataUrl] = useState(null);
+    const [editor, setEditor] = useState(null);
 
-    const onsubmit = data =>{
-        if (data.file!=undefined){uploadPicture(data.file.item(0));}
-        data.picture = pictureRef.toString();
-        console.log(data);
-        data.file = null;
-        db.collection('employees').doc().set(data);
-        //console.log(data);
-        //console.log(data.file.item(0))
-    };
+    const changeImageDataUrl = () => {
+        setImageDataUrl(editor.getImageScaledToCanvas().toDataURL())};
+
+
     function handleSubmit(event){
+        changeImageDataUrl();
+        console.log(imageDataUrl);
+        console.log(event);
         event.preventDefault();
-        uploadPicture(image);
+        uploadPicture(imageDataUrl);
 
         const data = {"name":name,
             "location":location,
@@ -77,12 +77,37 @@ function Admin() {
         };
         console.log(data);
         db.collection('employees').doc().set(data);
+
     }
 
     let storageRef = storage.ref();
-    const pictureDest ='images/'.concat(Date.now().toString());
     let pictureRef = storageRef.child('images/'.concat(Date.now().toString()));
-    let downloadUrl = "";
+    let photoEditor = null;
+
+    function handleScale(e) {
+        setScale(parseFloat(e.target.value))
+    }
+
+
+    if (image!=null) {
+        photoEditor =
+            <div>
+            <AvatarEditor
+                ref={setEditor}
+                image={image}
+                width={250}
+                height={250}
+                onPositionChange={changeImageDataUrl}
+                border={50}
+                color={[255, 255, 255, 0.6]} // RGBA
+                scale={scale}
+                rotate={0}
+                allowZoomOut={false}
+            />
+            <input type='range' value={scale} onChange={handleScale} min={0.5} max={2} step={0.1}/>
+            </div>
+    }
+
 
     return  (
 <form onSubmit={handleSubmit}>
@@ -100,6 +125,7 @@ function Admin() {
     <label>Has twin:   Yes<input name="hastwin" type="radio" value="Yes" onChange={event => setHasTwin(event.target.value)}/></label>
     <label>No<input name="hastwin" type="radio" value="No" onChange={event => setHasTwin(event.target.value)}/></label><br/>
     <label><input type='file'name='file' onChange={event => setImage(event.target.files.item(0))}/></label>
+    {photoEditor}
         <button type="submit">Submit</button>
 </form>
     )

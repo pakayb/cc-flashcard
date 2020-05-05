@@ -97,7 +97,8 @@ function Admin() {
                 image={image}
                 width={250}
                 height={250}
-                onPositionChange={changeImageDataUrl}
+                onMouseUp={changeImageDataUrl}
+                onImageReady={changeImageDataUrl}
                 border={50}
                 color={[255, 255, 255, 0.6]} // RGBA
                 scale={scale}

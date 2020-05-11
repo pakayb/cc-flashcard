@@ -25,6 +25,7 @@ function Card(props) {
         <div className=' text-center' >
             <div className='overflow front'>
                 <img id={props.id} alt={props.id} src={image} className='card-img-top'></img>
+                <img alt='codecool logo' src="https://journey.code.cool/static/assets/codecool_logo.png" className='card-img-bottom'/>
             </div>
             <div className='card-body text-dark back'>
                 <h4 className='card-title'>{props.name}</h4>

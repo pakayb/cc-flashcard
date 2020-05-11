@@ -12,9 +12,10 @@ div {
 
 .card {
     width: 20rem;
-    transition: transform 2s;
+    transition: transform 1s;
     transform-style: preserve-3d;
     cursor: pointer;
+
 }
 
 .card-body{
@@ -44,5 +45,11 @@ div {
 .back {
     border: 2px solid black;
     transform: rotateY(180deg);
+}
+
+.card-img-bottom {
+    height: 50px;
+    width: 50px !important;
+    margin-top: 20px;
 }
 

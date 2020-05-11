@@ -41,6 +41,7 @@ function Admin() {
             }, function() {
                 // Upload completed successfully, now we can get the download URL
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    alert('Upload completed');
                     console.log('File available at', downloadURL);
                 });
             });

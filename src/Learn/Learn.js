@@ -8,10 +8,11 @@ function Learn() {
     const [employeesData,loading,error] = useCollectionData(
         db.collection('employees'));
     let cards = [];
+    let cardsToLoad =[];
     if(!loading){
         cards = employeesData.map((employee) => {
         return (
-            <div className='col-md-4'>
+            <div className='col-md-4 col-sm-6 col-4'>
             <Card name={employee.name}
                   role={employee.role}
                   location={employee.location}
@@ -24,14 +25,24 @@ function Learn() {
             />
             </div>
         )
-        })
+        });
+    cardsToLoad = cards.map((card, index)=>{
+        if (index%3 ===0 ){
+            return(
+                <div className='row'>
+                    {cards[index]}
+                    {cards[index+1]}
+                    {cards[index+2]}
+                </div>
+                )
+        }
+        else return null;
+    });
     }
 
     return (
-         <div className='container-fluid d-flex justify-content-center'>
-             <div className='row'>
-             {cards}
-         </div>
+         <div className='container-fluid justify-content-center'>
+             {cardsToLoad}
 
          </div>
 

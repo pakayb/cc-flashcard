@@ -106,7 +106,7 @@ function Admin() {
                 rotate={0}
                 allowZoomOut={false}
             />
-            <input type='range' value={scale} onChange={handleScale} min={0.5} max={2} step={0.1}/>
+            <input type='range' value={scale} onChange={handleScale} onMouseUp={changeImageDataUrl} min={0.5} max={2} step={0.1}/>
             </div>
     }
 
